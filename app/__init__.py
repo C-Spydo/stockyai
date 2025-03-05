@@ -5,7 +5,8 @@ from flask_cors import CORS
 from .config import Config
 from .extensions import *
 from .constants import *
-from flask import Flask 
+from flask import Flask
+from flask_restx import Api
 
 load_dotenv()
 
@@ -17,11 +18,12 @@ def create_app(config_class=Config):
 
     CORS(app)
 
+    # api = Api(app,version="1.0", title="StockyAPi", description="StockyAPi API", doc="/swagger/")
+
+
     register_blueprints(app)
 
     initialize_extensions(app)
-    if app.config.get("DEBUG"):  # Only enable auto-reload in development
-        app.run(debug=True)
 
     return app
 
@@ -33,5 +35,8 @@ def initialize_extensions(app):
 
 
 def register_blueprints(app):
-    app.register_blueprint(routes_blueprint)
+    # api.init_app(routes_blueprint)
+    app.register_blueprint(routes_blueprint, url_prefix="/api")
+
+
 
