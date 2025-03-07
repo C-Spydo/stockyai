@@ -47,6 +47,6 @@ def run_scheduler(app):
         
     scheduler = BackgroundScheduler()
     scheduler.add_job(scrape_stocks, IntervalTrigger(hours=6), args=[app])
-    # scheduler.add_job(clean_stock_table, IntervalTrigger(days=1), args=[app])
+    scheduler.add_job(clean_stock_table, IntervalTrigger(day=1), args=[app])
     scheduler.start()
 
