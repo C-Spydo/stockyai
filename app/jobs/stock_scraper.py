@@ -16,7 +16,7 @@ URLS = {
 
 def scrape_stocks(app):
     with app.app_context():
-        stock_symbols = ['TSLA']
+        stock_symbols = ['TSLA', 'GOOG']
         stock_data_objects = []
 
         for symbol in stock_symbols:
