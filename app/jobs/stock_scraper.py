@@ -16,7 +16,7 @@ URLS = {
 
 def scrape_stocks(app):
     with app.app_context():
-        stock_symbols = ['TSLA', 'NVDA', 'GOOG', 'AAPL', 'AMZN', 'MSFT', 'META', 'NFLX', 'AMD', 'BRK.B', 'JPM']
+        stock_symbols = ['TSLA', 'NVDA', 'GOOG', 'AAPL', 'AMZN', 'MSFT', 'META', 'NFLX', 'AMD']
         stock_data_objects = []
 
         for symbol in stock_symbols:
@@ -27,14 +27,14 @@ def scrape_stocks(app):
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             stock_data = f"""
-            Stock News of {symbol} on the {timestamp}\n\n
+            Stock News of {symbol} on {timestamp}\n
 
             The stock price is ${price}.\n
             """
 
             news_content = [data['content'] for data in news]
 
-            stock_data += "\n".join(f"\n{content}" for content in news_content)
+            stock_data += "\n".join(f"{content}" for content in news_content)
 
             scraped_data = StockData(name=symbol+timestamp, news=stock_data, stock_metadata=jsonpickle.encode({'stock_symbol': symbol, 'timestamp': timestamp}))
             stock_data_objects.append(scraped_data)
