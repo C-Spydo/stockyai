@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
 class ChatSetting(BaseModel):
-    username: str
+    email: str
     prompt: str
-    stock: str

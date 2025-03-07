@@ -10,7 +10,7 @@ from ..enums import CustomStatusCode
 
 @routes_blueprint.route('/start-chat', methods=['POST'])
 @ValidateParameters(url_validation_error_handler)
-def start_chat(email:str = Json(), prompt:str = Json(), stock:str = Json()):
+def start_chat(email:str = Json(), prompt:str = Json()):
     response = chat.start_chat(request.get_json())
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, response), 200
 

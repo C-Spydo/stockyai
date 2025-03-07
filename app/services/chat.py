@@ -19,17 +19,16 @@ from flask import abort
 
 def start_chat(request: ChatSetting):
     user = validate_user(request['email'])
-    stock = validate_stock(request['stock'])
 
     chat_memory = create_chat_memory()
 
     context = retrieve_relevant_documents(request['prompt'])
     
-    langchain_conversation = create_conversation_chain(get_llm(), chat_memory, get_prompt_template(stock, context))
+    langchain_conversation = create_conversation_chain(get_llm(), chat_memory, get_prompt_template(context))
 
     ai_response = langchain_conversation.invoke({"input": request['prompt']})
 
-    chat = Chat(user_id=user.id, stock=stock, memory=jsonpickle.encode(chat_memory))
+    chat = Chat(user_id=user.id, stock="", memory=jsonpickle.encode(chat_memory))
     add_record_to_database(chat)
 
     return {"chat_id": chat.id, "chat_history": chat_memory.load_memory_variables({})["chat_history"] ,"ai_response": ai_response}
@@ -41,7 +40,7 @@ def prompt_bot(request: Prompt):
 
     context = retrieve_relevant_documents(request['prompt'])
 
-    langchain_conversation = create_conversation_chain(get_llm(), chat_memory, get_prompt_template(chat.stock, context))
+    langchain_conversation = create_conversation_chain(get_llm(), chat_memory, get_prompt_template(context))
 
     ai_response = langchain_conversation.predict(input=request['prompt'])
 
@@ -86,16 +85,17 @@ def create_chat_memory():
             human_prefix="User"
         )
 
-def get_system_message(stock):
+def get_system_message():
      return f"""
-        You are a chatbot assistant on only {stock} stocks.
+        You are a chatbot assistant on stocks.
         You are asked to generate short and accurate answers using the provided context.
-        Do not formulate answers,only use the retrieved documents, but do not sound like you are using a retrieved document.\n
+        Do not formulate answers,only use the retrieved documents, but do not sound like you are using a retrieved document.
+        If question is outside context made available to you, simply state so\n
         """
     
 
-def get_prompt_template(stock, context):
-    system_message = get_system_message(stock)
+def get_prompt_template(context):
+    system_message = get_system_message()
 
     return PromptTemplate(
         input_variables=["input", "chat_history"],
